@@ -1,3 +1,29 @@
 .trend-icon {
-  font-size: 30px;
+  font-size: 10px;
+  color: #ff0000;
+  border-radius: 40px;
+  width: 50px;
+  height: 50px;
+  padding: 14px;
+}
+.light-bg {
+  background-color: #f1f5f9;
+}
+.dark-bg {
+  background-color: black;
+}
+.Trend-page {
+  border: 1px solid red;
+  display: flex;
+  min-height: 100%;
+}
+.adreee {
+  border: 1px solid green;
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.sidebar {
+  height: 100%;
 }

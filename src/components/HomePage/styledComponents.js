@@ -1,19 +1,23 @@
 import styled from 'styled-components'
 
 export const HomeViewContainer = styled.div`
-  border: 4px solid green;
   margin-top: 6px;
 `
 
 export const SearchAndItemsContainer = styled.div`
-  border: 3px solid green;
   min-height: 100vh;
   padding: 10px;
   display: flex;
+  margin: 0px;
+  padding: 0px;
   flex-direction: column;
-  background-color: ${props => (props.homeBgColor ? '#f1f5f9' : '#0f0f0f')};
 `
-
+export const ListVideos = styled.ul`
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 0px;
+  margin: 0px;
+`
 export const SearchInputDiv = styled.div`
   display: flex;
   border: 1px solid #7e858e;
@@ -44,7 +48,6 @@ export const SearchButton = styled.button`
   margin: 0px;
 `
 export const HomeFailureViewContainer = styled.div`
-  border: 1px solid yellow;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -58,7 +61,7 @@ export const HomeFailureImg = styled.img`
 export const HomeFailHeading = styled.h1`
   font-size: 28px;
   font-family: 'Roboto';
-  color: ${props => (props.failHeading ? '#313131' : '#fff')};
+  color: ${props => (props.homeFailHead ? '#313131' : '#fff')};
 `
 export const HomeFailDescription = styled.p`
   font-size: 18px;
@@ -78,13 +81,11 @@ export const HomeFailButton = styled.button`
   margin-top: 16px;
 `
 export const NoSearchResultContainer = styled.div`
-  border: 1px solid yellow;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: ${props => (props.failureItemBg ? '#f1f5f9' : '#0f0f0f')};
 `
 export const NoSearchFailureImg = styled.img`
   width: 300px;

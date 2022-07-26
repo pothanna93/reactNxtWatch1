@@ -3,10 +3,13 @@ import Cookies from 'js-cookie'
 import Loader from 'react-loader-spinner'
 import {HiFire} from 'react-icons/hi'
 import ThemeContext from '../../context/ThemeContext'
+import Header from '../Header'
 
 import './index.css'
 
 import {
+  TrendingAllContainer,
+  TrendSidDiv,
   TrendingContainer,
   UnOrderList,
   TrendNav,
@@ -16,8 +19,10 @@ import {
   TrendFailHeading,
   TrendFailDescription,
   TrendFailButton,
+  NavAndTrendContainer,
 } from './styledComponents'
 import TrendCard from '../TrendCard'
+import SideBar from '../SideBar'
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -50,7 +55,7 @@ class TrendingRoute extends Component {
       method: 'GET',
     }
     const response = await fetch(apiUrl, options)
-    if (response.ok === false) {
+    if (response.ok === true) {
       const data = await response.json()
       console.log(data)
       const trendingVideos = data.videos.map(eachVideos => ({
@@ -91,7 +96,9 @@ class TrendingRoute extends Component {
         return (
           <TrendFailureViewContainer>
             <TrendFailureImg src={failImg} alt="failure" />
-            <TrendFailHeading>Somthing went wrong</TrendFailHeading>
+            <TrendFailHeading something={isDarkTheme}>
+              Something went wrong
+            </TrendFailHeading>
             <TrendFailDescription>we are having some</TrendFailDescription>
             <TrendFailButton>Retry</TrendFailButton>
           </TrendFailureViewContainer>
@@ -107,11 +114,12 @@ class TrendingRoute extends Component {
       <ThemeContext.Consumer>
         {value => {
           const {isDarkTheme} = value
+          const iconBg = isDarkTheme ? 'light-bg' : 'dark-bg'
           return (
-            <TrendingContainer>
-              <TrendNav>
-                <HiFire className="trend-icon" />
-                <TrendHeading>Trending</TrendHeading>
+            <TrendingContainer trendBgColor={isDarkTheme}>
+              <TrendNav navBg={isDarkTheme}>
+                <HiFire className={`trend-icon ${iconBg}`} />
+                <TrendHeading trending={isDarkTheme}>Trending</TrendHeading>
               </TrendNav>
               <UnOrderList>
                 {trendingVideosList.map(eachItem => (
@@ -143,7 +151,26 @@ class TrendingRoute extends Component {
   }
 
   render() {
-    return <div>{this.renderAll()}</div>
+    return (
+      <>
+        <Header />
+        <ThemeContext.Consumer>
+          {value => {
+            const {isDarkTheme} = value
+            return (
+              <TrendingAllContainer PageBgColor={isDarkTheme}>
+                <TrendSidDiv>
+                  <SideBar />
+                </TrendSidDiv>
+                <NavAndTrendContainer itemsBgColor={isDarkTheme}>
+                  {this.renderAll()}
+                </NavAndTrendContainer>
+              </TrendingAllContainer>
+            )
+          }}
+        </ThemeContext.Consumer>
+      </>
+    )
   }
 }
 export default TrendingRoute

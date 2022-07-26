@@ -20,7 +20,10 @@ import {
   NoSearchFailHeading,
   NoSearchFailDescription,
   NoSearchFailButton,
+  ListVideos,
 } from './styledComponents'
+
+import './index.css'
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -117,12 +120,16 @@ class HomePage extends Component {
             <SearchInputDiv>
               <InputElement
                 type="search"
+                placeholder="Search"
                 fontColor={isDarkTheme}
                 onChange={this.onChangeSearch}
                 value={searchInput}
                 onKeyDown={this.onClickInput}
               />
-              <SearchButton onClick={this.onClickSearchIcon}>
+              <SearchButton
+                data-testid="searchButton"
+                onClick={this.onClickSearchIcon}
+              >
                 <BiSearch className={`search-icon ${iconBg}`} />
               </SearchButton>
             </SearchInputDiv>
@@ -132,55 +139,53 @@ class HomePage extends Component {
     )
   }
 
-  renderHomeVideoFailureView = () => {
-    const {searchInput} = this.state
-    return (
-      <ThemeContext.Consumer>
-        {value => {
-          const {isDarkTheme} = value
+  renderHomeVideoFailureView = () => (
+    <ThemeContext.Consumer>
+      {value => {
+        const {isDarkTheme} = value
 
-          const failImg = isDarkTheme
-            ? 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-light-theme-img.png'
-            : 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-dark-theme-img.png'
-          return (
-            <HomeFailureViewContainer>
-              <HomeFailureImg src={failImg} alt="failure" />
-              <HomeFailHeading>Somthing went wrong</HomeFailHeading>
-              <HomeFailDescription>we are having some</HomeFailDescription>
-              <HomeFailButton>Retry</HomeFailButton>
-            </HomeFailureViewContainer>
-          )
-        }}
-      </ThemeContext.Consumer>
-    )
-  }
+        const failImg = isDarkTheme
+          ? 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-light-theme-img.png'
+          : 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-dark-theme-img.png'
+        return (
+          <HomeFailureViewContainer>
+            <HomeFailureImg src={failImg} alt="failure" />
+            <HomeFailHeading homeFailHead={isDarkTheme}>
+              Somthing went wrong
+            </HomeFailHeading>
+            <HomeFailDescription>we are having some</HomeFailDescription>
+            <HomeFailButton onClick={this.getProducts}>Retry</HomeFailButton>
+          </HomeFailureViewContainer>
+        )
+      }}
+    </ThemeContext.Consumer>
+  )
 
   renderHomeItem = () => {
-    const {videosLists, searchInput} = this.state
+    const {videosLists} = this.state
     const {videoItem} = videosLists
     const displayVideos = videoItem.length > 0
     return (
       <ThemeContext.Consumer>
         {value => {
           const {isDarkTheme} = value
-          const iconBg = isDarkTheme ? 'light-mode' : 'dark-mode'
 
           return displayVideos ? (
-            <SearchAndItemsContainer homeBgColor={isDarkTheme}>
-              <ul className="unordered-list">
+            <SearchAndItemsContainer>
+              <ListVideos className="unordered-list">
                 {videoItem.map(eachItem => (
                   <HomeVideoItems
                     key={eachItem.id}
                     videoItemDetails={eachItem}
                   />
                 ))}
-              </ul>
+              </ListVideos>
             </SearchAndItemsContainer>
           ) : (
             <NoSearchResultContainer>
               <NoSearchFailureImg
                 src="https://assets.ccbp.in/frontend/react-js/nxt-watch-no-search-results-img.png"
-                alt="failure"
+                alt="failure view"
               />
               <NoSearchFailHeading failHeading={isDarkTheme}>
                 No Search Results Found

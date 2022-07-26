@@ -1,41 +1,79 @@
 import {Component} from 'react'
-import {Route, Switch} from 'react-router-dom'
+import {Route, Switch, Redirect} from 'react-router-dom'
 import ThemeContext from './context/ThemeContext'
 
-import Header from './components/Header'
 import LoginPage from './components/LoginPage'
 import NotFound from './components/NotFound'
 import HomeRoute from './components/HomeRoute'
 import TrendingRoute from './components/TrendingRoute'
 import GamingRoute from './components/GamingRoute'
+import ProtectedRoute from './components/ProtectedRoute'
+import VideoItemDetails from './components/VideoItemDetails'
 import SavedVideos from './components/SavedVideos'
-import HomePage from './components/HomePage'
 
 class App extends Component {
   state = {
     isDarkTheme: true,
+    savedVideos: [],
+    activeTab: 'HOME',
   }
 
-  toggleTheme = () => {
-    this.setState(prevState => ({
-      isDarkTheme: !prevState.isDarkTheme,
-    }))
+  onChangeTheme = () => {
+    this.setState(prev => ({isDarkTheme: !prev.isDarkTheme}))
+  }
+
+  addToSaveVideos = videoDetailsList => {
+    const {savedVideos} = this.state
+    const videoObject = savedVideos.find(
+      each => each.id === videoDetailsList.id,
+    )
+
+    if (videoObject) {
+      this.setState(prev => ({
+        savedVideos: [...prev.savedVideos],
+      }))
+    } else {
+      this.setState({savedVideos: [...savedVideos, videoDetailsList]})
+    }
+  }
+
+  removeSaveVideos = id => {
+    const {savedVideos} = this.state
+    const updatedVideos = savedVideos.filter(each => each.id !== id)
+    this.setState({savedVideos: updatedVideos})
+  }
+
+  activeTabItem = item => {
+    this.setState({activeTab: item})
   }
 
   render() {
-    const {isDarkTheme} = this.state
+    const {isDarkTheme, savedVideos, activeTab} = this.state
     return (
       <ThemeContext.Provider
         value={{
           isDarkTheme,
-          toggleTheme: this.toggleTheme,
+          savedVideos,
+          addToSaveVideos: this.addToSaveVideos,
+          activeTabItem: this.activeTabItem,
+          activeTab,
+          onChangeTheme: this.onChangeTheme,
+          removeSaveVideos: this.removeSaveVideos,
         }}
       >
         <Switch>
-          <Route exact path="/" component={HomeRoute} />
-          <Route exact path="/heder" component={Header} />
           <Route exact path="/login" component={LoginPage} />
-          <Route component={NotFound} />
+          <ProtectedRoute exact path="/" component={HomeRoute} />
+          <ProtectedRoute exact path="/trending" component={TrendingRoute} />
+          <ProtectedRoute exact path="/gaming" component={GamingRoute} />
+          <ProtectedRoute exact path="/saved-videos" component={SavedVideos} />
+          <ProtectedRoute
+            exact
+            path="/videos/:id"
+            component={VideoItemDetails}
+          />
+          <Route path="/not-found" component={NotFound} />
+          <Redirect to="not-found" />
         </Switch>
       </ThemeContext.Provider>
     )

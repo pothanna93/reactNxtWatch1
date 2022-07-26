@@ -1,10 +1,10 @@
 import styled from 'styled-components'
 
 export const TrendItem = styled.li`
-  border: 2px solid red;
-  list-style-type: none;
+  border: 3px solid green;
   margin: 5px;
   display: flex;
+
   flex-direction: column;
 
   @media screen and (min-width: 768px) {
@@ -12,21 +12,27 @@ export const TrendItem = styled.li`
     padding: 30px;
   }
 `
+export const ImgDiv = styled.div`
+  border: 1px solid red;
+  display: flex;
+  height: 100%;
+  width: 100%;
+`
 export const TrendImg = styled.img`
   width: 100%;
+  height: 200px;
   @media screen and (min-width: 768px) {
-    width: 50%;
+    width: 100%;
   }
 `
 export const TrendInfo = styled.div`
-  border: 1px solid yellow;
+  border: 2px solid red;
+
   display: flex;
-  justify-content: flex-start;
-  margin-top: 8px;
+  flex-direction: row;
   @media screen and (min-width: 768px) {
-    margin-top: 0px;
-    width: 50%;
-    margin-left: 10px;
+    height: 100%;
+    width: 100%;
   }
 `
 export const TrendProfileImg = styled.img`
@@ -42,13 +48,15 @@ export const TrendInfoTextContainer = styled.div`
 `
 export const TrendTitle = styled.h1`
   font-family: 'Roboto';
-  font-size: 24px;
+  font-size: 22px;
   margin-top: 0px;
   line-height: 1.7;
+  color: ${props => (props.TrTitle ? '#212121' : '#fff')};
 `
 export const TrendName = styled.p`
   font-family: 'Roboto';
   font-size: 18px;
+  color: #94a3b8;
 `
 
 export const TrendViewsCountContainer = styled.div`

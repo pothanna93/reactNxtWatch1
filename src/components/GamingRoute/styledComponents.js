@@ -1,33 +1,25 @@
 import styled from 'styled-components'
 
-export const TrendingAllContainer = styled.div`
+export const GamingAllContainer = styled.div`
   display: flex;
   background-color: ${props => (props.PageBgColor ? '#f9f9f9' : '#231f20')};
 `
-export const TrendSidDiv = styled.div`
-  border: 2px solid black;
+
+export const GamingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+export const SideDiv = styled.div`
   margin: 5px;
   display: flex;
   flex-direction: column;
 `
-export const TrendingContainer = styled.div`
-  border: 4px solid red;
-`
-export const NavAndTrendContainer = styled.div`
-  border: 3px solid black;
+export const GamingItemsContainer = styled.div`
   width: 100%;
   margin: 5px;
   background-color: ${props => (props.itemsBgColor ? '#f1f5f9' : '#0f0f0f')};
 `
-export const UnOrderList = styled.ul`
-  border: 3px solid green;
-  list-style-type: none;
-  display: flex;
-  flex-direction: column;
-  padding-left: 0px;
-`
 export const TrendNav = styled.nav`
-  border: 1px solid black;
   display: flex;
   align-items: center;
   padding: 10px;
@@ -40,13 +32,20 @@ export const TrendHeading = styled.h1`
   font-size: 40px;
   margin-left: 16px;
 `
+export const UnOrderList = styled.ul`
+  padding-left: 0px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  list-style-type: none;
+`
 export const TrendFailureViewContainer = styled.div`
-  border: 1px solid yellow;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
+  width: 100%;
 `
 export const TrendFailureImg = styled.img`
   width: 340px;

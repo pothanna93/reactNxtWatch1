@@ -1,3 +1,7 @@
+import {Link} from 'react-router-dom'
+import ThemeContext from '../../context/ThemeContext'
+import './index.css'
+
 import {
   TrendItem,
   TrendImg,
@@ -7,6 +11,7 @@ import {
   TrendTitle,
   TrendName,
   TrendViewsCountContainer,
+  ImgDiv,
 } from './styledComponents'
 
 const TrendCard = props => {
@@ -17,23 +22,35 @@ const TrendCard = props => {
     viewCount,
     channel,
     title,
+    id,
   } = trendingVideoDetails
   const {name, profileImageUrl} = channel
   return (
-    <TrendItem>
-      <TrendImg src={thumbnailUrl} alt={title} />
-      <TrendInfo>
-        <TrendProfileImg src={profileImageUrl} alt={name} />
-        <TrendInfoTextContainer>
-          <TrendTitle>{title}</TrendTitle>
-          <TrendName>{name}</TrendName>
-          <TrendViewsCountContainer>
-            <TrendName>{viewCount} Views</TrendName>
-            <TrendName>. {publishedAt}</TrendName>
-          </TrendViewsCountContainer>
-        </TrendInfoTextContainer>
-      </TrendInfo>
-    </TrendItem>
+    <ThemeContext.Consumer>
+      {value => {
+        const {isDarkTheme} = value
+        return (
+          <Link to={`/videos/${id}`} className="link">
+            <TrendItem>
+              <ImgDiv>
+                <TrendImg src={thumbnailUrl} alt={title} />
+              </ImgDiv>
+              <TrendInfo>
+                <TrendProfileImg src={profileImageUrl} alt={name} />
+                <TrendInfoTextContainer>
+                  <TrendTitle TrTitle={isDarkTheme}>{title}</TrendTitle>
+                  <TrendName>{name}</TrendName>
+                  <TrendViewsCountContainer>
+                    <TrendName>{viewCount} Views</TrendName>
+                    <TrendName>. {publishedAt}</TrendName>
+                  </TrendViewsCountContainer>
+                </TrendInfoTextContainer>
+              </TrendInfo>
+            </TrendItem>
+          </Link>
+        )
+      }}
+    </ThemeContext.Consumer>
   )
 }
 

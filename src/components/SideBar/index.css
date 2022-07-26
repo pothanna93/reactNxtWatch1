@@ -1,7 +1,13 @@
 .link-element {
-  border: 1px solid yellow;
   display: flex;
   align-items: center;
   margin: 5px;
   width: 100%;
+}
+.contact-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+  padding: 10px;
 }

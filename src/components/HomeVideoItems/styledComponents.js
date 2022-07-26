@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 
 export const ListItemContainer = styled.li`
-  border: 1px solid aqua;
   list-style-type: none;
   margin-bottom: 12px;
   display: flex;
@@ -10,7 +9,7 @@ export const ListItemContainer = styled.li`
   width: 100%;
 
   @media screen and (min-width: 768px) {
-    width: 310px;
+    width: 300px;
     flex-grow: 1;
     margin: 8px;
   }
@@ -22,7 +21,6 @@ export const ThumbnailImage = styled.img`
 export const ProfileImgAndInfoContainer = styled.div`
   display: flex;
   margin-top: 6px;
-  border: 1px solid red;
 `
 export const ProfilePic = styled.img`
   width: 40px;
@@ -31,13 +29,13 @@ export const ProfilePic = styled.img`
 export const InfoContainer = styled.div`
   display: flex;
   flex-direction: column;
-  border: 1px solid black;
+
   margin-left: 8px;
 `
 export const Title = styled.p`
   font-size: 16px;
-  margin-top: 6px;
-  margin-bottom: 2px;
+  margin-top: 8px;
+  margin-bottom: 6px;
   margin-right: 6px;
   font-family: 'Roboto';
   font-weight: 400;
@@ -55,7 +53,6 @@ export const TitleOfVideo = styled.p`
   color: ${props => (props.videoHeading ? '#1e293b' : '#fff')};
 `
 export const ViewsContainer = styled.div`
-  border: 1px solid green;
   display: flex;
   margin-top: 0px;
   padding-top: 0px;

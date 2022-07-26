@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 
 export const TrendingAllContainer = styled.div`
+  border: 2px solid aqua;
   display: flex;
   background-color: ${props => (props.PageBgColor ? '#f9f9f9' : '#231f20')};
 `
@@ -61,16 +62,4 @@ export const TrendFailDescription = styled.p`
   font-size: 18px;
   font-family: 'Roboto';
   color: #475569;
-`
-export const TrendFailButton = styled.button`
-  width: 120px;
-  height: 38px;
-  background-color: #4f46e5;
-  color: #fff;
-  font-size: 16px;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  border-radius: 5px;
-  margin-top: 16px;
 `
