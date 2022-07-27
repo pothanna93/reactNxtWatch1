@@ -67,7 +67,7 @@ const SavedVideos = () => {
 
         const theme = isDarkTheme ? 'dark' : 'light'
         return (
-          <SavedVideosMainContainer data-testid="savedVideos" theme={theme}>
+          <SavedVideosMainContainer theme={theme}>
             <Header />
             <MainBody>
               <SidebarContainer>

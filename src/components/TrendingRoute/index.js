@@ -157,7 +157,7 @@ class TrendingRoute extends Component {
           const theme = isDarkTheme ? 'dark' : 'light'
 
           return (
-            <TrendingMainContainer data-testid="trending" theme={theme}>
+            <TrendingMainContainer theme={theme} data-testid="trending">
               <Header />
               <MainBody>
                 <SidebarContainer>

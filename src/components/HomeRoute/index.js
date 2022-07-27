@@ -1,9 +1,10 @@
 import {Component} from 'react'
+import Cookies from 'js-cookie'
+import {Redirect, Link} from 'react-router-dom'
 
 import {IoMdClose} from 'react-icons/io'
 import {BsSearch} from 'react-icons/bs'
 
-import Cookies from 'js-cookie'
 import Loader from 'react-loader-spinner'
 import Header from '../Header'
 import SideBar from '../SideBar'
@@ -219,6 +220,11 @@ class HomeRoute extends Component {
 
   render() {
     const {isPopup, searchInput} = this.state
+    const jwtToken = Cookies.get('jwt_token')
+    if (jwtToken === undefined) {
+      return <Redirect to="/login" />
+    }
+
     return (
       <ThemeContext.Consumer>
         {value => {
@@ -226,7 +232,7 @@ class HomeRoute extends Component {
           const theme = isDarkTheme ? 'dark' : 'light'
           const color = isDarkTheme ? '#f9f9f9' : '#181818'
           return (
-            <HomeMainContainer data-testid="home" theme={theme}>
+            <HomeMainContainer theme={theme} data-testid="home">
               <Header />
               <MainBody>
                 <SidebarContainer>

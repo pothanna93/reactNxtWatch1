@@ -155,7 +155,7 @@ class GamingRoute extends Component {
           const {isDarkTheme} = value
           const theme = isDarkTheme ? 'dark' : 'light'
           return (
-            <GamingMainContainer data-testid="gaming" theme={theme}>
+            <GamingMainContainer theme={theme} data-testid="gaming">
               <Header />
               <MainBody>
                 <SidebarContainer>

@@ -1,5 +1,7 @@
 import {Component} from 'react'
 import Cookies from 'js-cookie'
+
+import {Redirect} from 'react-router-dom'
 import ThemeContext from '../../Context/ThemeContext'
 
 import {
@@ -74,6 +76,10 @@ class LoginPage extends Component {
   render() {
     const {username, password, checkedPassword} = this.state
     const {showSubmitError, errorMsg} = this.state
+    const jwtToken = Cookies.get('jwt_token')
+    if (jwtToken !== undefined) {
+      return <Redirect to="/" />
+    }
     return (
       <ThemeContext.Consumer>
         {value => {
@@ -85,7 +91,7 @@ class LoginPage extends Component {
           return (
             <LoginContainer back={isDarkTheme}>
               <ResponseContainer backColor={isDarkTheme}>
-                <LogoImage src={LOGO} alt="logo" />
+                <LogoImage src={LOGO} alt="website logo" />
                 <Form onSubmit={this.onFormSubmit}>
                   <UserContainer>
                     <LabelElement htmlFor="username" userName={isDarkTheme}>

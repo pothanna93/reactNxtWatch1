@@ -1,17 +1,15 @@
 import styled from 'styled-components'
 
 export const LoginContainer = styled.div`
-  border: 1px solid red;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 16px;
-  background-color: ${props => (props.back ? '#212121' : '#fff')};
+  background-color: ${props => (props.back ? '#212121' : '#ffffff')};
 `
 export const ResponseContainer = styled.div`
-  border: 1px solid green;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -19,7 +17,7 @@ export const ResponseContainer = styled.div`
   justify-content: center;
   width: 100%;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 16px;
-  background-color: ${props => (props.backColor ? ' #0f0f0f' : '#fff')};
+  background-color: ${props => (props.backColor ? ' #0f0f0f' : '#ffffff')};
   @media screen and (min-width: 768px) {
     max-width: 680px;
     width: 100%;
@@ -32,7 +30,7 @@ export const LogoImage = styled.img`
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
-  border: 1px solid black;
+
   width: 100%;
   margin-top: 20px;
   padding: 20px;
@@ -78,7 +76,7 @@ export const LabelCheckBox = styled.label`
   font-weight: 500;
 `
 export const ButtonElement = styled.button`
-  color: #fff;
+  color: #ffffff;
   background-color: #3b82f6;
   padding-top: 14px;
   padding-bottom: 14px;

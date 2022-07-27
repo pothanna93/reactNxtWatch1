@@ -287,20 +287,20 @@ class VideoItemDetails extends Component {
           const {isDarkTheme} = value
           const theme = isDarkTheme ? 'dark' : 'light'
           return (
-            <div>
+            <>
               <Header />
               <MainBody>
                 <SidebarContainer>
                   <SideBar />
                 </SidebarContainer>
                 <VideoItemDetailsContainer
-                  data-testid="videoItemDetails"
                   theme={theme}
+                  data-testid="videoItemDetails"
                 >
                   {this.checkApiStatus()}
                 </VideoItemDetailsContainer>
               </MainBody>
-            </div>
+            </>
           )
         }}
       </ThemeContext.Consumer>
