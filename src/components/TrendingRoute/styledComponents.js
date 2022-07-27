@@ -1,76 +1,91 @@
 import styled from 'styled-components'
 
-export const TrendingAllContainer = styled.div`
-  display: flex;
-  background-color: ${props => (props.PageBgColor ? '#f9f9f9' : '#231f20')};
+export const MainBody = styled.div`
+  @media screen and (min-width: 768px) {
+    display: flex;
+    flex-direction: row;
+  }
 `
-export const TrendSidDiv = styled.div`
-  border: 2px solid black;
-  margin: 5px;
-  display: flex;
-  flex-direction: column;
-`
-export const TrendingContainer = styled.div`
-  border: 4px solid red;
-`
-export const NavAndTrendContainer = styled.div`
-  border: 3px solid black;
-  width: 100%;
-  margin: 5px;
-  background-color: ${props => (props.itemsBgColor ? '#f1f5f9' : '#0f0f0f')};
-`
-export const UnOrderList = styled.ul`
-  border: 3px solid green;
-  list-style-type: none;
-  display: flex;
-  flex-direction: column;
-  padding-left: 0px;
-`
-export const TrendNav = styled.nav`
-  border: 1px solid black;
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  background-color: ${props => (props.navBg ? '#ebebeb' : '#181818')};
-`
-export const TrendHeading = styled.h1`
-  font-family: 'Roboto';
 
-  color: ${props => (props.trending ? '#1e293b' : '#fff')};
-  font-size: 40px;
-  margin-left: 16px;
+export const SidebarContainer = styled.div`
+  display: none;
+  @media screen and (min-width: 768px) {
+    display: block;
+  }
 `
-export const TrendFailureViewContainer = styled.div`
-  border: 1px solid yellow;
+
+export const TrendingMainContainer = styled.div`
+  background-color: ${props =>
+    props.theme === 'dark' ? '#0f0f0f' : '#f9f9f9'};
+`
+
+export const TrendingContainer = styled.div`
+  height: 90vh;
+  overflow-x: auto;
+  flex-grow: 1;
+  padding: 15px;
+`
+
+export const TrendingMenuContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 7px;
+  @media screen and (min-width: 768px) {
+    padding-left: 20px;
+  }
+  background-color: ${props =>
+    props.theme === 'dark' ? '#424242' : '#f8fafc'};
+`
+export const IconContainer = styled.div`
+  padding: 10px;
+  border-radius: 40px;
+  margin-right: 10px;
+  margin-left: 10px;
+  background-color: ${props =>
+    props.theme === 'dark' ? '#0f0f0f' : '#e2e8f0'};
+`
+export const MenuHeading = styled.h1`
+  color: ${props => (props.theme === 'dark' ? '#f9f9f9' : '#0f0f0f')};
+`
+export const LoaderContainer = styled.div`
+  text-align: center;
+`
+export const FailureContainer = styled.div`
   display: flex;
   flex-direction: column;
+  text-align: center;
   align-items: center;
-  justify-content: center;
-  height: 100vh;
+  margin: 10px;
 `
-export const TrendFailureImg = styled.img`
-  width: 340px;
-  height: 320px;
+
+export const FailureImg = styled.img`
+  width: 80%;
+  padding-top: 15px;
+  @media screen and (min-width: 768px) {
+    width: 50%;
+  }
 `
-export const TrendFailHeading = styled.h1`
-  font-size: 28px;
-  font-family: 'Roboto';
-  color: ${props => (props.something ? '#212121' : ' #f9f9f9')};
+
+export const FailureText = styled.h1`
+  margin: 0px;
+  padding: 5px;
+  color: ${props => (props.theme === 'dark' ? '#f9f9f9' : '#181818')};
 `
-export const TrendFailDescription = styled.p`
-  font-size: 18px;
-  font-family: 'Roboto';
-  color: #475569;
-`
-export const TrendFailButton = styled.button`
-  width: 120px;
-  height: 38px;
+export const RetryButton = styled.button`
   background-color: #4f46e5;
-  color: #fff;
-  font-size: 16px;
+  color: white;
   border: none;
-  outline: none;
-  cursor: pointer;
+  width: 100px;
+  height: 30px;
+  margin-top: 10px;
   border-radius: 5px;
-  margin-top: 16px;
+`
+
+export const VideosList = styled.ul`
+  list-style: none;
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
 `

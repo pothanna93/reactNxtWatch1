@@ -1,57 +1,79 @@
 import {Link} from 'react-router-dom'
-import ThemeContext from '../../context/ThemeContext'
-import './index.css'
+import {formatDistanceToNow} from 'date-fns'
+import ThemeContext from '../../Context/ThemeContext'
+import ActiveMenuContext from '../../Context/ActiveMenuContext'
 
 import {
-  TrendItem,
-  TrendImg,
-  TrendInfo,
-  TrendProfileImg,
-  TrendInfoTextContainer,
-  TrendTitle,
-  TrendName,
-  TrendViewsCountContainer,
-  ImgDiv,
+  VideoCardContainer,
+  Thumbnail,
+  ChannelLogo,
+  ThumbnailText,
+  VideoTitle,
+  VideoTextContainer,
+  VideoDetailsContainer,
+  VideoDetailsContainer2,
+  VideoDetailsText,
 } from './styledComponents'
 
 const TrendCard = props => {
-  const {trendingVideoDetails} = props
+  const {videoDetails} = props
   const {
-    publishedAt,
     thumbnailUrl,
-    viewCount,
     channel,
+    viewCount,
     title,
     id,
-  } = trendingVideoDetails
+    publishedAt,
+  } = videoDetails
+
   const {name, profileImageUrl} = channel
-  return (
-    <ThemeContext.Consumer>
-      {value => {
-        const {isDarkTheme} = value
-        return (
-          <Link to={`/videos/${id}`} className="link">
-            <TrendItem>
-              <ImgDiv>
-                <TrendImg src={thumbnailUrl} alt={title} />
-              </ImgDiv>
-              <TrendInfo>
-                <TrendProfileImg src={profileImageUrl} alt={name} />
-                <TrendInfoTextContainer>
-                  <TrendTitle TrTitle={isDarkTheme}>{title}</TrendTitle>
-                  <TrendName>{name}</TrendName>
-                  <TrendViewsCountContainer>
-                    <TrendName>{viewCount} Views</TrendName>
-                    <TrendName>. {publishedAt}</TrendName>
-                  </TrendViewsCountContainer>
-                </TrendInfoTextContainer>
-              </TrendInfo>
-            </TrendItem>
-          </Link>
-        )
-      }}
-    </ThemeContext.Consumer>
-  )
+  let postedAt = formatDistanceToNow(new Date(publishedAt))
+  const postedAtList = postedAt.split(' ')
+
+  if (postedAtList.length === 3) {
+    postedAtList.shift()
+    postedAt = postedAtList.join(' ')
+  }
+
+  const card = value => {
+    const {isDarkTheme} = value
+    const theme = isDarkTheme ? 'dark' : 'light'
+    return (
+      <ActiveMenuContext.Consumer>
+        {val => {
+          const {changeActiveMenu} = val
+          return (
+            <Link
+              to={`/videos/${id}`}
+              className="link"
+              onClick={() => changeActiveMenu('INITIAL')}
+            >
+              <VideoCardContainer>
+                <Thumbnail src={thumbnailUrl} alt="video thumbnail" />
+                <ThumbnailText>
+                  <div>
+                    <ChannelLogo src={profileImageUrl} alt="channel logo" />
+                  </div>
+                  <VideoTextContainer>
+                    <VideoTitle theme={theme}>{title}</VideoTitle>
+                    <VideoDetailsContainer>
+                      <VideoDetailsText>{name}</VideoDetailsText>
+                      <VideoDetailsContainer2>
+                        <VideoDetailsText>{viewCount} views</VideoDetailsText>
+                        <VideoDetailsText>{postedAt} ago</VideoDetailsText>
+                      </VideoDetailsContainer2>
+                    </VideoDetailsContainer>
+                  </VideoTextContainer>
+                </ThumbnailText>
+              </VideoCardContainer>
+            </Link>
+          )
+        }}
+      </ActiveMenuContext.Consumer>
+    )
+  }
+
+  return <ThemeContext.Consumer>{value => card(value)}</ThemeContext.Consumer>
 }
 
 export default TrendCard

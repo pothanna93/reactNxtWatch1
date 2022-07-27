@@ -1,109 +1,93 @@
-import {Component} from 'react'
-import Cookies from 'js-cookie'
-import Loader from 'react-loader-spinner'
-import {HiFire} from 'react-icons/hi'
-import ThemeContext from '../../context/ThemeContext'
-import Header from '../Header'
+import {RiMenuAddLine} from 'react-icons/ri'
 
-import {
-  TrendingAllContainer,
-  TrendSidDiv,
-  TrendingContainer,
-  UnOrderList,
-  TrendNav,
-  TrendHeading,
-  TrendFailureViewContainer,
-  TrendFailureImg,
-  TrendFailHeading,
-  TrendFailDescription,
-  NavAndTrendContainer,
-} from './styledComponents'
-import TrendCard from '../TrendCard'
+import Header from '../Header'
 import SideBar from '../SideBar'
 
-const apiStatusConstants = {
-  initial: 'INITIAL',
-  success: 'SUCCESS',
-  failure: 'FAILURE',
-  inProgress: 'IN_PROGRESS',
-}
+import {
+  MainBody,
+  SidebarContainer,
+  SavedVideosMainContainer,
+  SavedVideosContainer,
+  SavedMenuContainer,
+  IconContainer,
+  MenuHeading,
+  VideosList,
+  NoVideosContainer,
+  NoVideosImg,
+  FailureText,
+} from './styledComponents'
 
-class TrendingRoute extends Component {
-  renderLoadingView = () => (
-    <div className="videos-loader-view" data-testid="loader">
-      <Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />
-    </div>
-  )
+import TrendingVideoCard from '../TrendCard'
+import SavedVideosContext from '../../Context/SavedVideosContext'
+import ThemeContext from '../../Context/ThemeContext'
 
-  renderTrendingItems = () => (
+const SavedVideos = () => {
+  const savedList = themeValue => {
+    const {isDarkTheme} = themeValue
+
+    const theme = isDarkTheme ? 'dark' : 'light'
+
+    return (
+      <SavedVideosContext.Consumer>
+        {value => {
+          const {savedVideosList} = value
+          if (savedVideosList.length === 0) {
+            return (
+              <NoVideosContainer>
+                <NoVideosImg
+                  src="https://assets.ccbp.in/frontend/react-js/nxt-watch-no-saved-videos-img.png "
+                  alt="no saved videos"
+                />
+
+                <FailureText theme={theme} as="h1">
+                  No saved videos found
+                </FailureText>
+                <FailureText theme={theme} as="p">
+                  You can save your videos while watching them
+                </FailureText>
+              </NoVideosContainer>
+            )
+          }
+          return (
+            <VideosList>
+              {savedVideosList.map(each => (
+                <TrendingVideoCard videoDetails={each} key={each.id} />
+              ))}
+            </VideosList>
+          )
+        }}
+      </SavedVideosContext.Consumer>
+    )
+  }
+
+  return (
     <ThemeContext.Consumer>
       {value => {
-        const {isDarkTheme, savedVideos} = value
-        const savedVideoLength = savedVideos.length === 0
-        const iconBg = isDarkTheme ? 'light-bg' : 'dark-bg'
+        const {isDarkTheme} = value
 
-        return savedVideoLength ? (
-          <TrendFailureViewContainer>
-            <TrendFailureImg
-              src="https://assets.ccbp.in/frontend/react-js/nxt-watch-no-saved-videos-img.png"
-              alt="failure"
-            />
-            <TrendFailHeading something={isDarkTheme}>
-              Something went wrong
-            </TrendFailHeading>
-            <TrendFailDescription>No Saved Videos Found</TrendFailDescription>
-          </TrendFailureViewContainer>
-        ) : (
-          <TrendingContainer trendBgColor={isDarkTheme}>
-            <TrendNav navBg={isDarkTheme}>
-              <HiFire className={`trend-icon ${iconBg}`} />
-              <TrendHeading trending={isDarkTheme}>Saved Videos</TrendHeading>
-            </TrendNav>
-            <UnOrderList>
-              {savedVideos.map(eachItem => (
-                <TrendCard key={eachItem.id} trendingVideoDetails={eachItem} />
-              ))}
-            </UnOrderList>
-          </TrendingContainer>
+        const theme = isDarkTheme ? 'dark' : 'light'
+        return (
+          <SavedVideosMainContainer data-testid="savedVideos" theme={theme}>
+            <Header />
+            <MainBody>
+              <SidebarContainer>
+                <SideBar />
+              </SidebarContainer>
+              <SavedVideosContainer>
+                <SavedMenuContainer theme={theme}>
+                  <IconContainer theme={theme}>
+                    <RiMenuAddLine size={40} color="#ff0b37" />
+                  </IconContainer>
+                  <MenuHeading theme={theme}>Saved Videos</MenuHeading>
+                </SavedMenuContainer>
+                {savedList(value)}
+              </SavedVideosContainer>
+            </MainBody>
+          </SavedVideosMainContainer>
         )
       }}
     </ThemeContext.Consumer>
   )
-
-  renderAll = () => {
-    const {apiStatus} = this.state
-    switch (apiStatus) {
-      case apiStatusConstants.success:
-        return this.renderTrendingItems()
-
-      case apiStatusConstants.inProgress:
-        return this.renderLoadingView()
-      default:
-        return null
-    }
-  }
-
-  render() {
-    return (
-      <>
-        <Header />
-        <ThemeContext.Consumer>
-          {value => {
-            const {isDarkTheme} = value
-            return (
-              <TrendingAllContainer PageBgColor={isDarkTheme}>
-                <TrendSidDiv>
-                  <SideBar />
-                </TrendSidDiv>
-                <NavAndTrendContainer itemsBgColor={isDarkTheme}>
-                  {this.renderTrendingItems()}
-                </NavAndTrendContainer>
-              </TrendingAllContainer>
-            )
-          }}
-        </ThemeContext.Consumer>
-      </>
-    )
-  }
 }
-export default TrendingRoute
+
+export default SavedVideos

@@ -9,7 +9,7 @@ import {
   NotSideBarContainer,
 } from './styledComponents'
 
-import ThemeContext from '../../context/ThemeContext'
+import ThemeContext from '../../Context/ThemeContext'
 
 const NotFound = () => (
   <ThemeContext.Consumer>
@@ -29,9 +29,11 @@ const NotFound = () => (
             </NotSideBarContainer>
 
             <NotFoundContainer itemsBgColor={isDarkTheme}>
-              <NotFoundImg src={BgImg} alt="notfound" />
+              <NotFoundImg src={BgImg} alt="not found" />
               <Heading>Page Not Found</Heading>
-              <Description>we are sorry the page</Description>
+              <Description>
+                we are sorry, the page you requested could not be found.
+              </Description>
             </NotFoundContainer>
           </NotFoundDiv>
         </>

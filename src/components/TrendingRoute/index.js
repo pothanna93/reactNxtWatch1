@@ -1,28 +1,26 @@
 import {Component} from 'react'
-import Cookies from 'js-cookie'
+import {AiFillFire} from 'react-icons/ai'
 import Loader from 'react-loader-spinner'
-import {HiFire} from 'react-icons/hi'
-import ThemeContext from '../../context/ThemeContext'
+import Cookies from 'js-cookie'
 import Header from '../Header'
-
-import './index.css'
-
-import {
-  TrendingAllContainer,
-  TrendSidDiv,
-  TrendingContainer,
-  UnOrderList,
-  TrendNav,
-  TrendHeading,
-  TrendFailureViewContainer,
-  TrendFailureImg,
-  TrendFailHeading,
-  TrendFailDescription,
-  TrendFailButton,
-  NavAndTrendContainer,
-} from './styledComponents'
-import TrendCard from '../TrendCard'
 import SideBar from '../SideBar'
+import TrendCard from '../TrendCard'
+import ThemeContext from '../../Context/ThemeContext'
+import {
+  MainBody,
+  SidebarContainer,
+  TrendingContainer,
+  TrendingMenuContainer,
+  IconContainer,
+  MenuHeading,
+  LoaderContainer,
+  FailureContainer,
+  FailureImg,
+  FailureText,
+  RetryButton,
+  VideosList,
+  TrendingMainContainer,
+} from './styledComponents'
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -33,44 +31,43 @@ const apiStatusConstants = {
 
 class TrendingRoute extends Component {
   state = {
+    videosList: [],
     apiStatus: apiStatusConstants.initial,
-    trendingVideosList: [],
   }
 
-  componentDidMount() {
-    this.getTrendingVideos()
+  componentDidMount = () => {
+    this.getVideos()
   }
 
-  getTrendingVideos = async () => {
-    this.setState({
-      apiStatus: apiStatusConstants.inProgress,
-    })
+  getVideos = async () => {
+    this.setState({apiStatus: apiStatusConstants.inProgress})
 
     const jwtToken = Cookies.get('jwt_token')
-    const apiUrl = 'https://apis.ccbp.in/videos/trending'
+    const url = 'https://apis.ccbp.in/videos/trending'
     const options = {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
       },
       method: 'GET',
     }
-    const response = await fetch(apiUrl, options)
+
+    const response = await fetch(url, options)
+    const data = await response.json()
+
     if (response.ok === true) {
-      const data = await response.json()
-      console.log(data)
-      const trendingVideos = data.videos.map(eachVideos => ({
-        publishedAt: eachVideos.published_at,
-        id: eachVideos.id,
-        thumbnailUrl: eachVideos.thumbnail_url,
-        title: eachVideos.title,
-        viewCount: eachVideos.view_count,
+      const updatedData = data.videos.map(eachItem => ({
+        id: eachItem.id,
         channel: {
-          name: eachVideos.channel.name,
-          profileImageUrl: eachVideos.channel.profile_image_url,
+          name: eachItem.channel.name,
+          profileImageUrl: eachItem.channel.profile_image_url,
         },
+        publishedAt: eachItem.published_at,
+        thumbnailUrl: eachItem.thumbnail_url,
+        title: eachItem.title,
+        viewCount: eachItem.view_count,
       }))
       this.setState({
-        trendingVideosList: trendingVideos,
+        videosList: updatedData,
         apiStatus: apiStatusConstants.success,
       })
     } else {
@@ -80,71 +77,73 @@ class TrendingRoute extends Component {
     }
   }
 
-  renderLoadingView = () => (
-    <div className="videos-loader-view" data-testid="loader">
-      <Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />
-    </div>
-  )
+  successView = () => {
+    const {videosList} = this.state
 
-  renderTrendingFailureView = () => (
+    return (
+      <VideosList>
+        {videosList.map(each => (
+          <TrendCard videoDetails={each} key={each.id} />
+        ))}
+      </VideosList>
+    )
+  }
+
+  failureView = () => (
     <ThemeContext.Consumer>
       {value => {
         const {isDarkTheme} = value
-        const failImg = isDarkTheme
-          ? 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-light-theme-img.png'
-          : 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-dark-theme-img.png'
+        const theme = isDarkTheme ? 'dark' : 'light'
+        const imgUrl = isDarkTheme
+          ? 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-dark-theme-img.png'
+          : 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-light-theme-img.png'
+
         return (
-          <TrendFailureViewContainer>
-            <TrendFailureImg src={failImg} alt="failure" />
-            <TrendFailHeading something={isDarkTheme}>
-              Something went wrong
-            </TrendFailHeading>
-            <TrendFailDescription>we are having some</TrendFailDescription>
-            <TrendFailButton>Retry</TrendFailButton>
-          </TrendFailureViewContainer>
+          <FailureContainer>
+            <FailureImg src={imgUrl} alt="failure view" />
+
+            <FailureText theme={theme}>Oops! Something Went Wrong</FailureText>
+            <FailureText theme={theme} as="p">
+              We are having some trouble to complete your request. Please try
+              again
+            </FailureText>
+            <RetryButton type="button" onClick={this.getVideos}>
+              Retry
+            </RetryButton>
+          </FailureContainer>
         )
       }}
     </ThemeContext.Consumer>
   )
 
-  renderTrendingItems = () => {
-    const {trendingVideosList} = this.state
+  loader = () => (
+    <ThemeContext.Consumer>
+      {value => {
+        const {isDarkTheme} = value
+        return (
+          <LoaderContainer className="loader-container" data-testid="loader">
+            <Loader
+              type="ThreeDots"
+              color={isDarkTheme ? '#ffffff' : '#000000'}
+              height="50"
+              width="50"
+            />
+          </LoaderContainer>
+        )
+      }}
+    </ThemeContext.Consumer>
+  )
 
-    return (
-      <ThemeContext.Consumer>
-        {value => {
-          const {isDarkTheme} = value
-          const iconBg = isDarkTheme ? 'light-bg' : 'dark-bg'
-          return (
-            <TrendingContainer trendBgColor={isDarkTheme}>
-              <TrendNav navBg={isDarkTheme}>
-                <HiFire className={`trend-icon ${iconBg}`} />
-                <TrendHeading trending={isDarkTheme}>Trending</TrendHeading>
-              </TrendNav>
-              <UnOrderList>
-                {trendingVideosList.map(eachItem => (
-                  <TrendCard
-                    key={eachItem.id}
-                    trendingVideoDetails={eachItem}
-                  />
-                ))}
-              </UnOrderList>
-            </TrendingContainer>
-          )
-        }}
-      </ThemeContext.Consumer>
-    )
-  }
-
-  renderAll = () => {
+  checkApiStatus = () => {
     const {apiStatus} = this.state
+
     switch (apiStatus) {
       case apiStatusConstants.success:
-        return this.renderTrendingItems()
+        return this.successView()
       case apiStatusConstants.failure:
-        return this.renderTrendingFailureView()
+        return this.failureView()
       case apiStatusConstants.inProgress:
-        return this.renderLoadingView()
+        return this.loader()
       default:
         return null
     }
@@ -152,24 +151,32 @@ class TrendingRoute extends Component {
 
   render() {
     return (
-      <>
-        <Header />
-        <ThemeContext.Consumer>
-          {value => {
-            const {isDarkTheme} = value
-            return (
-              <TrendingAllContainer PageBgColor={isDarkTheme}>
-                <TrendSidDiv>
+      <ThemeContext.Consumer>
+        {value => {
+          const {isDarkTheme} = value
+          const theme = isDarkTheme ? 'dark' : 'light'
+
+          return (
+            <TrendingMainContainer data-testid="trending" theme={theme}>
+              <Header />
+              <MainBody>
+                <SidebarContainer>
                   <SideBar />
-                </TrendSidDiv>
-                <NavAndTrendContainer itemsBgColor={isDarkTheme}>
-                  {this.renderAll()}
-                </NavAndTrendContainer>
-              </TrendingAllContainer>
-            )
-          }}
-        </ThemeContext.Consumer>
-      </>
+                </SidebarContainer>
+                <TrendingContainer>
+                  <TrendingMenuContainer theme={theme}>
+                    <IconContainer theme={theme}>
+                      <AiFillFire size={40} color="#ff0b37" />
+                    </IconContainer>
+                    <MenuHeading theme={theme}>Trending</MenuHeading>
+                  </TrendingMenuContainer>
+                  {this.checkApiStatus()}
+                </TrendingContainer>
+              </MainBody>
+            </TrendingMainContainer>
+          )
+        }}
+      </ThemeContext.Consumer>
     )
   }
 }

@@ -1,43 +1,39 @@
 import {Component} from 'react'
-
-import {RiPlayListAddFill} from 'react-icons/ri'
-import {
-  AiOutlineLike,
-  AiOutlineDislike,
-  AiFillLike,
-  AiFillDislike,
-} from 'react-icons/ai'
+import {formatDistanceToNow} from 'date-fns'
+import {BiLike, BiDislike} from 'react-icons/bi'
+import {RiMenuAddLine} from 'react-icons/ri'
 import Cookies from 'js-cookie'
-import Loader from 'react-loader-spinner'
 import ReactPlayer from 'react-player'
+import Loader from 'react-loader-spinner'
 import Header from '../Header'
 import SideBar from '../SideBar'
 
-import {
-  VideoItemContainer,
-  VideoItemDetailsContainer,
-  TrendFailureViewContainer,
-  TrendFailureImg,
-  TrendFailHeading,
-  TrendFailDescription,
-  TrendFailButton,
-  SideDiv,
-  GamingItemsContainer,
-  TextContainer,
-  VideoTitle,
-  PublishedLikesContainer,
-  PublishedDiv,
-  LikesDiv,
-  HorizontalLine,
-  LikeDiv,
-  ChannelContainer,
-  UserProfileDiv,
-  ChannelLogo,
-  ChannelNameDiv,
-  ChannelName,
-} from './styledComponents'
+import ThemeContext from '../../Context/ThemeContext'
+import SavedVideosContext from '../../Context/SavedVideosContext'
 
-import ThemeContext from '../../context/ThemeContext'
+import {
+  MainBody,
+  SidebarContainer,
+  FailureImg,
+  FailureContainer,
+  FailureText,
+  RetryButton,
+  LoaderContainer,
+  VideoItemDetailsContainer,
+  PlayerContainer,
+  VideoDetailContainer,
+  VideoTextContainer,
+  VideoTitle,
+  ViewsAndPostedContainer,
+  LikesAndViewsContainer,
+  ViewsText,
+  Button,
+  ChannelLogo,
+  ChannelDetails,
+  ChannelDetailsText,
+  ChannelDetailsText2,
+  VideoDescriptionText,
+} from './styledComponents'
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -49,10 +45,9 @@ const apiStatusConstants = {
 class VideoItemDetails extends Component {
   state = {
     apiStatus: apiStatusConstants.initial,
-    videoDetailsList: [],
-    isVideoSaved: false,
-    isLiked: false,
-    isDisliked: false,
+    videoDetails: {},
+    like: false,
+    dislike: false,
   }
 
   componentDidMount() {
@@ -60,196 +55,226 @@ class VideoItemDetails extends Component {
   }
 
   getVideoDetails = async () => {
-    this.setState({
-      apiStatus: apiStatusConstants.inProgress,
-    })
-
+    this.setState({apiStatus: apiStatusConstants.inProgress})
     const {match} = this.props
     const {params} = match
     const {id} = params
     const jwtToken = Cookies.get('jwt_token')
-    const apiUrl = `https://apis.ccbp.in/videos/${id}`
+    const url = `https://apis.ccbp.in/videos/${id}`
     const options = {
-      method: 'GET',
       headers: {
         Authorization: `Bearer ${jwtToken}`,
       },
+      method: 'GET',
     }
-    const response = await fetch(apiUrl, options)
+
+    const response = await fetch(url, options)
+    const data = await response.json()
 
     if (response.ok === true) {
-      const fetchData = await response.json()
-
-      const videoLists = {
-        description: fetchData.video_details.description,
-        id: fetchData.video_details.id,
-        publishedAt: fetchData.video_details.published_at,
-        thumbnailUrl: fetchData.video_details.thumbnail_url,
-        title: fetchData.video_details.title,
-        videoUrl: fetchData.video_details.video_url,
-        viewCount: fetchData.video_details.view_count,
+      const updatedData = {
+        videoDetails: data.video_details,
+      }
+      const {videoDetails} = updatedData
+      const updated = {
+        id: videoDetails.id,
+        description: videoDetails.description,
+        publishedAt: videoDetails.published_at,
+        thumbnailUrl: videoDetails.thumbnail_url,
+        title: videoDetails.title,
+        videoUrl: videoDetails.video_url,
+        viewCount: videoDetails.view_count,
         channel: {
-          name: fetchData.video_details.channel.name,
-          profileImageUrl: fetchData.video_details.channel.profile_image_url,
-          subscriberCount: fetchData.video_details.channel.subscriber_count,
+          name: videoDetails.channel.name,
+          profileImageUrl: videoDetails.channel.profile_image_url,
+          subscriberCount: videoDetails.channel.subscriber_count,
         },
       }
       this.setState({
-        videoDetailsList: videoLists,
+        videoDetails: updated,
         apiStatus: apiStatusConstants.success,
       })
     } else {
-      this.setState({
-        apiStatus: apiStatusConstants.failure,
-      })
+      this.setState({apiStatus: apiStatusConstants.failure})
     }
   }
 
-  renderVideoItems = () => (
-    <ThemeContext.Consumer>
-      {value => {
-        const {videoDetailsList, isVideoSaved, isLiked, isDisliked} = this.state
-        const {
-          id,
-          channel,
-          description,
-          viewCount,
-          videoUrl,
-          title,
-          publishedAt,
-          videoSaved,
-        } = videoDetailsList
-        const {name, profileImageUrl, subscriberCount} = channel
-        const {addToSaveVideos, removeSaveVideos} = value
+  updateLikeState = () => {
+    this.setState(prev => ({like: !prev.like, dislike: false}))
+  }
 
-        const addOrRemoveItem = () => {
-          if (isVideoSaved === true) {
-            removeSaveVideos(id)
-          } else {
-            addToSaveVideos({...videoDetailsList, videoSaved: true})
-          }
-        }
+  updateDislikeState = () => {
+    this.setState(prev => ({dislike: !prev.dislike, like: false}))
+  }
 
-        const saveVideoToList = () => {
-          this.setState(
-            prev => ({isVideoSaved: !prev.isVideoSaved}),
-            addOrRemoveItem,
+  successView = () => {
+    const {videoDetails, like, dislike} = this.state
+
+    const {
+      publishedAt,
+      title,
+      videoUrl,
+      viewCount,
+      channel,
+      description,
+      id,
+    } = videoDetails
+
+    const {name, profileImageUrl, subscriberCount} = channel
+    let postedAt = formatDistanceToNow(new Date(publishedAt))
+    const postedAtList = postedAt.split(' ')
+
+    if (postedAtList.length === 3) {
+      postedAtList.shift()
+      postedAt = postedAtList.join(' ')
+    }
+    return (
+      <ThemeContext.Consumer>
+        {value => {
+          const {isDarkTheme} = value
+          const theme = isDarkTheme ? 'dark' : 'light'
+
+          const likeIsActive = like ? 'active' : 'not-active'
+          const dislikeIsActive = dislike ? 'active' : 'not-active'
+          return (
+            <VideoDetailContainer>
+              <PlayerContainer>
+                <ReactPlayer
+                  url={videoUrl}
+                  controls
+                  width="100%"
+                  height="100%"
+                />
+              </PlayerContainer>
+              <VideoTextContainer>
+                <VideoTitle theme={theme}>{title}</VideoTitle>
+                <LikesAndViewsContainer>
+                  <ViewsAndPostedContainer>
+                    <ViewsText>{viewCount} views</ViewsText>
+                    <ViewsText>{postedAt} ago</ViewsText>
+                  </ViewsAndPostedContainer>
+                  <div>
+                    <Button
+                      type="button"
+                      theme={likeIsActive}
+                      onClick={this.updateLikeState}
+                    >
+                      <BiLike size={20} style={{paddingTop: '6px'}} />
+                      Like
+                    </Button>
+                    <Button
+                      type="button"
+                      theme={dislikeIsActive}
+                      onClick={this.updateDislikeState}
+                    >
+                      <BiDislike size={20} style={{paddingTop: '6px'}} />
+                      Dislike
+                    </Button>
+                    <SavedVideosContext.Consumer>
+                      {val => {
+                        const {updateSave, savedVideosList} = val
+
+                        const present = savedVideosList.find(
+                          each => each.id === id,
+                        )
+                        const saveIsActive =
+                          present !== undefined ? 'active' : 'not-active'
+                        const saveText =
+                          present !== undefined ? 'Saved' : 'Save'
+                        return (
+                          <Button
+                            type="button"
+                            theme={saveIsActive}
+                            onClick={() => updateSave(videoDetails)}
+                          >
+                            <RiMenuAddLine
+                              size={20}
+                              style={{paddingTop: '6px'}}
+                            />
+                            {saveText}
+                          </Button>
+                        )
+                      }}
+                    </SavedVideosContext.Consumer>
+                  </div>
+                </LikesAndViewsContainer>
+                <hr />
+                <ChannelDetails>
+                  <ChannelLogo src={profileImageUrl} alt="channel logo" />
+                  <div>
+                    <ChannelDetailsText theme={theme}>
+                      {name}
+                    </ChannelDetailsText>
+                    <ChannelDetailsText2>{subscriberCount}</ChannelDetailsText2>
+                  </div>
+                </ChannelDetails>
+                <VideoDescriptionText theme={theme}>
+                  {description}
+                </VideoDescriptionText>
+              </VideoTextContainer>
+            </VideoDetailContainer>
           )
-        }
+        }}
+      </ThemeContext.Consumer>
+    )
+  }
 
-        const onClickLikeButton = () => {
-          this.setState(prev => ({isLiked: !prev.isLiked, isDisliked: false}))
-        }
-
-        const onClickDislikeButton = () => {
-          this.setState(prev => ({
-            isDisliked: !prev.isDisliked,
-            isLiked: false,
-          }))
-        }
-
-        const likeClass = isLiked ? '#2563eb' : '#64748b'
-        const dislikeClass = isDisliked ? '#2563eb' : '#64748b'
-
-        const likeIcon = isLiked ? <AiFillLike /> : <AiOutlineLike />
-        const dislikeIcon = isDisliked ? (
-          <AiFillDislike />
-        ) : (
-          <AiOutlineDislike />
-        )
-        return (
-          <VideoItemDetailsContainer>
-            <ReactPlayer url={videoUrl} controls width="100%" height="450px" />
-            <TextContainer>
-              <VideoTitle>{title}</VideoTitle>
-              <PublishedLikesContainer>
-                <PublishedDiv>
-                  <VideoTitle>{viewCount} views</VideoTitle>
-                  <VideoTitle>{publishedAt}</VideoTitle>
-                </PublishedDiv>
-                <LikesDiv>
-                  <LikeDiv
-                    type="button"
-                    color={likeClass}
-                    onClick={onClickLikeButton}
-                  >
-                    {likeIcon}
-
-                    <VideoTitle color={likeClass}>Like</VideoTitle>
-                  </LikeDiv>
-                  <LikeDiv
-                    type="button"
-                    color={dislikeClass}
-                    onClick={onClickDislikeButton}
-                  >
-                    {dislikeIcon}
-                    <VideoTitle color={dislikeClass}>DisLike</VideoTitle>
-                  </LikeDiv>
-                  <LikeDiv
-                    color={videoSaved ? '#4f46e5' : '#181818'}
-                    onClick={saveVideoToList}
-                  >
-                    <RiPlayListAddFill />
-                    <VideoTitle color={videoSaved ? '#4f46e5' : '#181818'}>
-                      {isVideoSaved ? 'Saved' : 'Save'}
-                    </VideoTitle>
-                  </LikeDiv>
-                </LikesDiv>
-              </PublishedLikesContainer>
-            </TextContainer>
-            <HorizontalLine />
-            <ChannelContainer>
-              <UserProfileDiv>
-                <ChannelLogo src={profileImageUrl} alt="channel logo" />
-                <ChannelNameDiv>
-                  <ChannelName>{name}</ChannelName>
-                  <ChannelName>{subscriberCount} Subscribers</ChannelName>
-                </ChannelNameDiv>
-              </UserProfileDiv>
-              <ChannelName>{description}</ChannelName>
-            </ChannelContainer>
-          </VideoItemDetailsContainer>
-        )
-      }}
-    </ThemeContext.Consumer>
-  )
-
-  renderLoadingView = () => (
-    <div className="videos-loader-view" data-testid="loader">
-      <Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />
-    </div>
-  )
-
-  renderTrendingFailureView = () => (
+  failureView = () => (
     <ThemeContext.Consumer>
       {value => {
         const {isDarkTheme} = value
-        const failImg = isDarkTheme
-          ? 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-light-theme-img.png'
-          : 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-dark-theme-img.png'
+        const theme = isDarkTheme ? 'dark' : 'light'
+        const imgUrl = isDarkTheme
+          ? 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-dark-theme-img.png'
+          : 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-light-theme-img.png'
+
         return (
-          <TrendFailureViewContainer>
-            <TrendFailureImg src={failImg} alt="failure" />
-            <TrendFailHeading something={isDarkTheme}>
-              Something went wrong
-            </TrendFailHeading>
-            <TrendFailDescription>we are having some</TrendFailDescription>
-            <TrendFailButton>Retry</TrendFailButton>
-          </TrendFailureViewContainer>
+          <FailureContainer>
+            <FailureImg src={imgUrl} alt="failure view" />
+
+            <FailureText theme={theme}>Oops! Something Went Wrong</FailureText>
+            <FailureText as="p" theme={theme}>
+              We are having some trouble to complete your request. Please try
+              again.
+            </FailureText>
+            <RetryButton type="button" onClick={this.getVideoDetails}>
+              Retry
+            </RetryButton>
+          </FailureContainer>
         )
       }}
     </ThemeContext.Consumer>
   )
 
-  renderAll = () => {
+  loader = () => (
+    <ThemeContext.Consumer>
+      {value => {
+        const {isDarkTheme} = value
+        return (
+          <LoaderContainer className="loader-container" data-testid="loader">
+            <Loader
+              type="ThreeDots"
+              color={isDarkTheme ? '#ffffff' : '#000000'}
+              height="50"
+              width="50"
+            />
+          </LoaderContainer>
+        )
+      }}
+    </ThemeContext.Consumer>
+  )
+
+  checkApiStatus = () => {
     const {apiStatus} = this.state
+
     switch (apiStatus) {
       case apiStatusConstants.success:
-        return this.renderVideoItems()
+        return this.successView()
       case apiStatusConstants.failure:
-        return this.renderTrendingFailureView()
+        return this.failureView()
       case apiStatusConstants.inProgress:
-        return this.renderLoadingView()
+        return this.loader()
+
       default:
         return null
     }
@@ -257,26 +282,29 @@ class VideoItemDetails extends Component {
 
   render() {
     return (
-      <>
-        <Header />
-        <ThemeContext.Consumer>
-          {value => {
-            const {isDarkTheme} = value
-            return (
-              <VideoItemContainer PageBgColor={isDarkTheme}>
-                <SideDiv>
+      <ThemeContext.Consumer>
+        {value => {
+          const {isDarkTheme} = value
+          const theme = isDarkTheme ? 'dark' : 'light'
+          return (
+            <div>
+              <Header />
+              <MainBody>
+                <SidebarContainer>
                   <SideBar />
-                </SideDiv>
-                <GamingItemsContainer itemsBgColor={isDarkTheme}>
-                  {this.renderAll()}
-                </GamingItemsContainer>
-              </VideoItemContainer>
-            )
-          }}
-        </ThemeContext.Consumer>
-      </>
+                </SidebarContainer>
+                <VideoItemDetailsContainer
+                  data-testid="videoItemDetails"
+                  theme={theme}
+                >
+                  {this.checkApiStatus()}
+                </VideoItemDetailsContainer>
+              </MainBody>
+            </div>
+          )
+        }}
+      </ThemeContext.Consumer>
     )
   }
 }
-
 export default VideoItemDetails

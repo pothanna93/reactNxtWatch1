@@ -1,34 +1,57 @@
 import {Link} from 'react-router-dom'
-import {
-  GamingCardItem,
-  GameImg,
-  GameTitle,
-  GameViewCount,
-} from './styledComponents'
-import ThemeContext from '../../context/ThemeContext'
 
-import './index.css'
+import ThemeContext from '../../Context/ThemeContext'
+import ActiveMenuContext from '../../Context/ActiveMenuContext'
+
+import {
+  VideoCardContainer,
+  Thumbnail,
+  ThumbnailText,
+  VideoTitle,
+  VideoTextContainer,
+  VideoDetailsContainer,
+  VideoDetailsText,
+} from './styledComponents'
 
 const GamingCard = props => {
-  const {gamingVideoDetails} = props
-  const {title, viewCount, thumbnailUrl, id} = gamingVideoDetails
-  return (
-    <ThemeContext.Consumer>
-      {value => {
-        const {isDarkTheme} = value
-        return (
-          <GamingCardItem>
-            <Link to={`/videos/${id}`} className="link">
-              <GameImg src={thumbnailUrl} alt={title} />
-              <GameTitle gameTitle={isDarkTheme}>{title}</GameTitle>
-              <GameViewCount gameCount={isDarkTheme}>
-                {viewCount} Watching WorldWide
-              </GameViewCount>
-            </Link>
-          </GamingCardItem>
-        )
-      }}
-    </ThemeContext.Consumer>
-  )
+  const {videoDetails} = props
+  const {thumbnailUrl, viewCount, title, id} = videoDetails
+
+  const card = value => {
+    const {isDarkTheme} = value
+    const theme = isDarkTheme ? 'dark' : 'light'
+    return (
+      <ActiveMenuContext.Consumer>
+        {val => {
+          const {changeActiveMenu} = val
+
+          return (
+            <VideoCardContainer>
+              <Link
+                to={`/videos/${id}`}
+                className="link"
+                onClick={() => changeActiveMenu('INITIAL')}
+              >
+                <Thumbnail src={thumbnailUrl} alt="video thumbnail" />
+                <ThumbnailText>
+                  <VideoTextContainer>
+                    <VideoTitle theme={theme}>{title}</VideoTitle>
+                    <VideoDetailsContainer>
+                      <VideoDetailsText>
+                        {viewCount} Watching Worldwide
+                      </VideoDetailsText>
+                    </VideoDetailsContainer>
+                  </VideoTextContainer>
+                </ThumbnailText>
+              </Link>
+            </VideoCardContainer>
+          )
+        }}
+      </ActiveMenuContext.Consumer>
+    )
+  }
+
+  return <ThemeContext.Consumer>{value => card(value)}</ThemeContext.Consumer>
 }
+
 export default GamingCard

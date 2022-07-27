@@ -1,59 +1,67 @@
 import styled from 'styled-components'
 
-export const ListItemContainer = styled.li`
-  list-style-type: none;
-  margin-bottom: 12px;
-  display: flex;
-  flex-direction: column;
-
+export const VideoCardContainer = styled.li`
   width: 100%;
-
+  @media screen and (min-width: 576px) and (max-width: 767px) {
+    width: 50%;
+    padding: 5px;
+    height: 350px;
+  }
   @media screen and (min-width: 768px) {
-    width: 300px;
-    flex-grow: 1;
-    margin: 8px;
+    width: 33%;
+    padding: 5px;
+    height: 100%;
   }
 `
-export const ThumbnailImage = styled.img`
+
+export const Thumbnail = styled.img`
   width: 100%;
-  height: 200px;
 `
-export const ProfileImgAndInfoContainer = styled.div`
+
+export const ThumbnailText = styled.div`
   display: flex;
-  margin-top: 6px;
+  flex-direction: row;
+  padding: 5px;
+  text-decoration: 'none';
 `
-export const ProfilePic = styled.img`
+
+export const ChannelLogo = styled.img`
   width: 40px;
-  height: 40px;
 `
-export const InfoContainer = styled.div`
-  display: flex;
-  flex-direction: column;
 
-  margin-left: 8px;
-`
-export const Title = styled.p`
-  font-size: 16px;
-  margin-top: 8px;
-  margin-bottom: 6px;
-  margin-right: 6px;
-  font-family: 'Roboto';
-  font-weight: 400;
-  color: #475569;
-`
-export const TitleOfVideo = styled.p`
-  font-size: 16px;
-  padding: 0px;
+export const VideoTitle = styled.p`
   margin: 0px;
-  margin-right: 6px;
-  font-family: 'Roboto';
-  font-weight: 400;
-  line-height: 1.7;
-
-  color: ${props => (props.videoHeading ? '#1e293b' : '#fff')};
+  text-decoration: none;
+  &:active {
+    text-decoration: none;
+  }
+  color: ${props => (props.theme === 'dark' ? 'white' : '#0f0f0f')};
 `
-export const ViewsContainer = styled.div`
+export const VideoTextContainer = styled.div`
+  margin-left: 5px;
+`
+export const VideoDetailsContainer = styled.div`
   display: flex;
-  margin-top: 0px;
-  padding-top: 0px;
+  flex-direction: row;
+  @media screen and (min-width: 567px) {
+    flex-direction: column;
+  }
+`
+export const VideoDetailsContainer2 = styled.div`
+  display: flex;
+  flex-direction: row;
+`
+export const VideoDetailsText = styled.p`
+  margin: 0px;
+  margin-top: 8px;
+  margin-right: 8px;
+  margin-bottom: 4px;
+  color: #475569;
+  text-decoration: none;
+  &:active {
+    text-decoration: none;
+  }
+  @media screen and (min-width: 567px) {
+    margin-bottom: 0px;
+  }
 `

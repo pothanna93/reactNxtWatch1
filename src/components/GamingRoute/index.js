@@ -1,26 +1,30 @@
 import {Component} from 'react'
-import {SiYoutubegaming} from 'react-icons/si'
-import Cookies from 'js-cookie'
+import {IoLogoGameControllerB} from 'react-icons/io'
+
 import Loader from 'react-loader-spinner'
-import ThemeContext from '../../context/ThemeContext'
-import SideBar from '../SideBar'
+import Cookies from 'js-cookie'
 import Header from '../Header'
-import GamingCard from '../GamingCard'
+import SideBar from '../SideBar'
 
 import {
+  MainBody,
+  SidebarContainer,
+  GamingMenuContainer,
+  IconContainer,
+  MenuHeading,
   GamingContainer,
-  SideDiv,
-  GamingItemsContainer,
-  TrendNav,
-  TrendHeading,
-  UnOrderList,
-  TrendFailureViewContainer,
-  TrendFailureImg,
-  TrendFailHeading,
-  TrendFailDescription,
-  TrendFailButton,
-  GamingAllContainer,
+  LoaderContainer,
+  FailureContainer,
+  FailureImg,
+  FailureText,
+  RetryButton,
+  VideosList,
+  GamingMainContainer,
 } from './styledComponents'
+
+import GamingBody from '../GamingCard'
+
+import ThemeContext from '../../Context/ThemeContext'
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -31,39 +35,38 @@ const apiStatusConstants = {
 
 class GamingRoute extends Component {
   state = {
-    gamingVideosList: [],
+    videosList: [],
     apiStatus: apiStatusConstants.initial,
   }
 
   componentDidMount() {
-    this.getGamingVideos()
+    this.getVideos()
   }
 
-  getGamingVideos = async () => {
-    this.setState({
-      apiStatus: apiStatusConstants.inProgress,
-    })
+  getVideos = async () => {
+    this.setState({apiStatus: apiStatusConstants.inProgress})
 
     const jwtToken = Cookies.get('jwt_token')
-    const apiUrl = 'https://apis.ccbp.in/videos/gaming'
-
+    const url = 'https://apis.ccbp.in/videos/gaming'
     const options = {
-      method: 'GET',
       headers: {
         Authorization: `Bearer ${jwtToken}`,
       },
+      method: 'GET',
     }
-    const response = await fetch(apiUrl, options)
+
+    const response = await fetch(url, options)
+    const data = await response.json()
+
     if (response.ok === true) {
-      const data = await response.json()
-      const fetchData = data.videos.map(eachItem => ({
+      const updatedData = data.videos.map(eachItem => ({
         id: eachItem.id,
         thumbnailUrl: eachItem.thumbnail_url,
         title: eachItem.title,
         viewCount: eachItem.view_count,
       }))
       this.setState({
-        gamingVideosList: fetchData,
+        videosList: updatedData,
         apiStatus: apiStatusConstants.success,
       })
     } else {
@@ -73,70 +76,73 @@ class GamingRoute extends Component {
     }
   }
 
-  renderLoadingView = () => (
-    <div className="videos-loader-view" data-testid="loader">
-      <Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />
-    </div>
-  )
+  successView = () => {
+    const {videosList} = this.state
 
-  renderTrendingFailureView = () => (
+    return (
+      <VideosList>
+        {videosList.map(each => (
+          <GamingBody key={each.id} videoDetails={each} />
+        ))}
+      </VideosList>
+    )
+  }
+
+  loader = () => (
     <ThemeContext.Consumer>
       {value => {
         const {isDarkTheme} = value
-        const failImg = isDarkTheme
-          ? 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-light-theme-img.png'
-          : 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-dark-theme-img.png'
         return (
-          <TrendFailureViewContainer>
-            <TrendFailureImg src={failImg} alt="failure" />
-            <TrendFailHeading something={isDarkTheme}>
-              Something went wrong
-            </TrendFailHeading>
-            <TrendFailDescription>we are having some</TrendFailDescription>
-            <TrendFailButton onClick={this.getGamingVideos}>
-              Retry
-            </TrendFailButton>
-          </TrendFailureViewContainer>
+          <LoaderContainer className="loader-container" data-testid="loader">
+            <Loader
+              type="ThreeDots"
+              color={isDarkTheme ? '#ffffff' : '#000000'}
+              height="50"
+              width="50"
+            />
+          </LoaderContainer>
         )
       }}
     </ThemeContext.Consumer>
   )
 
-  renderGamingItems = () => {
-    const {gamingVideosList} = this.state
-    console.log(gamingVideosList)
-    return (
-      <ThemeContext.Consumer>
-        {value => {
-          const {isDarkTheme} = value
-          const iconBg = isDarkTheme ? 'light-bg' : 'dark-bg'
-          return (
-            <GamingContainer gameColor={isDarkTheme}>
-              <TrendNav navBg={isDarkTheme}>
-                <SiYoutubegaming className={`trend-icon ${iconBg}`} />
-                <TrendHeading trending={isDarkTheme}>Gaming</TrendHeading>
-              </TrendNav>
-              <UnOrderList>
-                {gamingVideosList.map(eachGame => (
-                  <GamingCard key={eachGame.id} gamingVideoDetails={eachGame} />
-                ))}
-              </UnOrderList>
-            </GamingContainer>
-          )
-        }}
-      </ThemeContext.Consumer>
-    )
-  }
+  failureView = () => (
+    <ThemeContext.Consumer>
+      {value => {
+        const {isDarkTheme} = value
+        const theme = isDarkTheme ? 'dark' : 'light'
+        const imgUrl = isDarkTheme
+          ? 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-dark-theme-img.png'
+          : 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-light-theme-img.png'
 
-  renderAll = () => {
+        return (
+          <FailureContainer>
+            <FailureImg src={imgUrl} alt="failure view" />
+
+            <FailureText theme={theme}>Oops! Something Went Wrong</FailureText>
+            <FailureText theme={theme} as="p">
+              We are having some trouble to complete your request. Please try
+              again
+            </FailureText>
+            <RetryButton type="button" onClick={this.getVideos}>
+              Retry
+            </RetryButton>
+          </FailureContainer>
+        )
+      }}
+    </ThemeContext.Consumer>
+  )
+
+  checkApiStatus = () => {
     const {apiStatus} = this.state
+
     switch (apiStatus) {
       case apiStatusConstants.success:
-        return this.renderGamingItems()
+        return this.successView()
       case apiStatusConstants.failure:
-        return this.renderTrendingFailureView()
+        return this.failureView()
       case apiStatusConstants.inProgress:
-        return this.renderLoadingView()
+        return this.loader()
       default:
         return null
     }
@@ -144,24 +150,31 @@ class GamingRoute extends Component {
 
   render() {
     return (
-      <>
-        <Header />
-        <ThemeContext.Consumer>
-          {value => {
-            const {isDarkTheme} = value
-            return (
-              <GamingAllContainer PageBgColor={isDarkTheme}>
-                <SideDiv>
+      <ThemeContext.Consumer>
+        {value => {
+          const {isDarkTheme} = value
+          const theme = isDarkTheme ? 'dark' : 'light'
+          return (
+            <GamingMainContainer data-testid="gaming" theme={theme}>
+              <Header />
+              <MainBody>
+                <SidebarContainer>
                   <SideBar />
-                </SideDiv>
-                <GamingItemsContainer itemsBgColor={isDarkTheme}>
-                  {this.renderAll()}
-                </GamingItemsContainer>
-              </GamingAllContainer>
-            )
-          }}
-        </ThemeContext.Consumer>
-      </>
+                </SidebarContainer>
+                <GamingContainer>
+                  <GamingMenuContainer theme={theme}>
+                    <IconContainer theme={theme}>
+                      <IoLogoGameControllerB size={40} color="#ff0b37" />
+                    </IconContainer>
+                    <MenuHeading theme={theme}>Gaming</MenuHeading>
+                  </GamingMenuContainer>
+                  {this.checkApiStatus()}
+                </GamingContainer>
+              </MainBody>
+            </GamingMainContainer>
+          )
+        }}
+      </ThemeContext.Consumer>
     )
   }
 }

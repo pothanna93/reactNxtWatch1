@@ -1,67 +1,78 @@
 import styled from 'styled-components'
 
-export const TrendItem = styled.li`
-  border: 3px solid green;
-  margin: 5px;
+export const VideoCardContainer = styled.div`
   display: flex;
-
   flex-direction: column;
-
-  @media screen and (min-width: 768px) {
+  width: 100%;
+  @media screen and (min-width: 576px) {
+    padding: 5px;
     flex-direction: row;
-    padding: 30px;
   }
 `
-export const ImgDiv = styled.div`
-  border: 1px solid red;
-  display: flex;
-  height: 100%;
-  width: 100%;
-`
-export const TrendImg = styled.img`
-  width: 100%;
-  height: 200px;
-  @media screen and (min-width: 768px) {
-    width: 100%;
-  }
-`
-export const TrendInfo = styled.div`
-  border: 2px solid red;
 
+export const Thumbnail = styled.img`
+  width: 100%;
+  @media screen and (min-width: 576px) and (max-width: 767px) {
+    width: 250px;
+  }
+  @media screen and (min-width: 768px) {
+    width: 350px;
+  }
+`
+
+export const ThumbnailText = styled.div`
   display: flex;
   flex-direction: row;
-  @media screen and (min-width: 768px) {
-    height: 100%;
-    width: 100%;
+  padding: 5px;
+  text-decoration: 'none';
+  width: 100%;
+`
+
+export const ChannelLogo = styled.img`
+  width: 40px;
+  @media screen and (min-width: 576px) {
+    display: none;
   }
 `
-export const TrendProfileImg = styled.img`
-  width: 50px;
-  height: 50px;
-`
-export const TrendInfoTextContainer = styled.div`
-  border: 1px solid pink;
-  margin-left: 12px;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
-`
-export const TrendTitle = styled.h1`
-  font-family: 'Roboto';
-  font-size: 22px;
-  margin-top: 0px;
-  line-height: 1.7;
-  color: ${props => (props.TrTitle ? '#212121' : '#fff')};
-`
-export const TrendName = styled.p`
-  font-family: 'Roboto';
-  font-size: 18px;
-  color: #94a3b8;
-`
 
-export const TrendViewsCountContainer = styled.div`
+export const VideoTitle = styled.p`
+  margin: 0px;
+  font-weight: 500;
+  text-decoration: none;
+  &:active {
+    text-decoration: none;
+  }
+  font-family: Roboto;
+  color: ${props => (props.theme === 'dark' ? 'white' : '#0f0f0f')};
+  @media screen and (min-width: 768px) {
+    font-size: 24px;
+  }
+`
+export const VideoTextContainer = styled.div`
+  margin-left: 5px;
+`
+export const VideoDetailsContainer = styled.div`
   display: flex;
-
-  border: 1px solid red;
-  margin-left: 0px;
+  flex-direction: row;
+  @media screen and (min-width: 567px) {
+    flex-direction: column;
+  }
+`
+export const VideoDetailsContainer2 = styled.div`
+  display: flex;
+  flex-direction: row;
+`
+export const VideoDetailsText = styled.p`
+  margin: 0px;
+  margin-top: 8px;
+  margin-right: 8px;
+  margin-bottom: 4px;
+  color: #475569;
+  text-decoration: none;
+  &:active {
+    text-decoration: none;
+  }
+  @media screen and (min-width: 567px) {
+    margin-bottom: 0px;
+  }
 `
